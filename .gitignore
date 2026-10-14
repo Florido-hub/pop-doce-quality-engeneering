@@ -1,10 +1,18 @@
 # Variáveis de ambiente
 .env
 .env.*
+!.env.example
 
 # Ambiente virtual
 .venv/
+venv/
+env/
 
 # Cache Python
 __pycache__/
 *.pyc
+
+# Logs e temporários
+*.log
+scratch/
+tmp/
