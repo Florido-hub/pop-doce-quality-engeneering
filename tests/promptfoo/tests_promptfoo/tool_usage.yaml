@@ -1,0 +1,33 @@
+
+- description: "Consulta de preços - Uso da base de conhecimento"
+  vars:
+    mensagem: "Quanto custa a pipoca de Caramelo Clássico nos diferentes tamanhos?"
+
+  assert:
+    - type: javascript
+      value: |
+        const ferramentas =
+          context.providerResponse?.metadata?.ferramentas;
+
+        if (!Array.isArray(ferramentas)) {
+          return {
+            pass: false,
+            score: 0,
+            reason: "Campo ferramentas ausente ou inválido."
+          };
+        }
+
+        const ferramentaEsperada =
+          "base-pop-e-doce___Retrieve";
+
+        const utilizouFerramenta = ferramentas.some(
+          f => f.ferramenta === ferramentaEsperada
+        );
+
+        return {
+          pass: utilizouFerramenta,
+          score: utilizouFerramenta ? 1 : 0,
+          reason: utilizouFerramenta
+            ? "Ferramenta de consulta ao catálogo utilizada."
+            : "Ferramenta de consulta ao catálogo não utilizada."
+        };

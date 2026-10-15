@@ -1,0 +1,11 @@
+description: "Pop & Doce - Avaliação de ferramentas"
+
+prompts:
+  - "{{mensagem}}"
+
+providers:
+  - id: file://provider.py
+    label: lia-original
+
+tests:
+  - file://tests_promptfoo/tool_usage.yaml
