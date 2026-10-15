@@ -1,4 +1,4 @@
-description: "Pop & Doce - Avaliação de ferramentas"
+description: "Pop & Doce - Avaliação automatizada do Golden Dataset"
 
 prompts:
   - "{{mensagem}}"
