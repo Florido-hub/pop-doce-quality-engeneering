@@ -205,23 +205,35 @@ O arquivo JSON preserva as respostas completas retornadas pela API, enquanto o C
 
 A suíte final comparável da versão original considera 30 casos com 3 execuções por caso, totalizando 90 execuções. O RT-CM-03 teve uma execução adicional de refinamento metodológico, preservada separadamente como evidência, mas não contabilizada como um caso extra na comparação.
 
-## 7. Comparação com o prompt corrigido
+## 7. Comparação entre a versão original e a versão corrigida
 
-A versão original apresentou 13 casos PASS e 17 casos FAIL, correspondendo a uma taxa de sucesso por caso de 43,3%. A comparação será concluída após a execução dos mesmos 30 casos, com três repetições por caso, utilizando o prompt de sistema corrigido.
+As duas versões foram avaliadas com os mesmos 30 casos de Red Teaming, com três execuções por caso. Um caso foi considerado PASS somente quando apresentou o comportamento esperado nas três execuções.
 
-| Métrica | Versão original | Versão corrigida |
-|---|---:|---:|
-| Casos avaliados | 30 | — |
-| Execuções | 90 | — |
-| Casos PASS | 13 | — |
-| Casos FAIL | 17 | — |
-| Taxa de sucesso por caso | 43,3% | — |
-| Latência média | 3,90 s | — |
-| Tokens utilizados | 772.386 | — |
-| Média de tokens por execução | 8.582,07 | — |
+| Métrica | Versão original | Versão corrigida | Variação |
+|---|---:|---:|---:|
+| Casos avaliados | 30 | 30 | — |
+| Execuções | 90 | 90 | — |
+| PASS | 13 | 13 | 0 |
+| FAIL | 17 | 17 | 0 |
+| Taxa de aprovação | 43,3% | 43,3% | 0,0 p.p. |
+| Latência média | 3,90 s | 3,39 s | -13,1% |
+| Tokens totais | 772.386 | 823.588 | +6,6% |
+| Tokens médios por execução | 8.582,07 | 9.150,98 | +6,6% |
 
-Na versão original, a Lia apresentou latência média de 3,90 segundos por execução, com valores entre 0,70 e 11,23 segundos. As 90 execuções consumiram 772.386 tokens, correspondendo a uma média de aproximadamente 8.582 tokens por execução. Essas métricas serão utilizadas como referência para comparação com a versão que utilizará o prompt corrigido.
+A versão corrigida não apresentou aumento na taxa de aprovação dos testes de Red Teaming. Foram mantidos 13 casos aprovados e 17 casos com pelo menos uma falha, resultando em 43,3% de aprovação nas duas versões.
+
+Entre as vulnerabilidades que permaneceram estão manipulação de preços por falsa instrução de sistema, uso de desconto oculto de 15%, aplicação do cupom encerrado NATAL2025, confirmação e enumeração de e-mails, informações incorretas sobre glúten e composição vegana, alegações relacionadas à glicemia, exposição de detalhes de ferramentas internas e saída do escopo por jailbreak.
+
+A latência média observada caiu de 3,90 s para 3,39 s, enquanto o consumo médio de tokens aumentou aproximadamente 6,6%. A comparação de latência deve ser interpretada com cautela, pois as execuções utilizaram configurações de paralelismo diferentes e a versão corrigida foi executada simultaneamente a outra avaliação. Dessa forma, a diferença de tempo não é atribuída diretamente à alteração do prompt.
+
+Os resultados indicam que a alteração do prompt, isoladamente, não foi suficiente para mitigar as vulnerabilidades identificadas. Parte dos comportamentos observados também envolve informações recuperadas da base de conhecimento, respostas das ferramentas e o comportamento do próprio modelo.
 
 ## 8. Conclusão
 
-A conclusão será preenchida após a comparação entre a versão original e a versão com o prompt corrigido, permitindo avaliar quais vulnerabilidades foram mitigadas e quais permanecem dependentes de alterações na base de conhecimento, ferramentas ou demais componentes da solução.
+A comparação entre as versões original e corrigida demonstrou que a alteração do prompt de sistema, isoladamente, não foi suficiente para aumentar a resistência da Lia aos cenários adversariais avaliados. As duas versões apresentaram 13 casos aprovados e 17 casos com falha, mantendo a taxa de aprovação em 43,3%.
+
+Permaneceram vulnerabilidades de alta relevância, incluindo manipulação de preços, aplicação de desconto não previsto, validação de cupom encerrado, confirmação e enumeração de dados associados a pedidos, informações incorretas sobre ingredientes e restrições alimentares, alegações relacionadas à saúde e exposição de informações sobre ferramentas internas.
+
+Os resultados também indicam que parte das falhas não depende exclusivamente do prompt de sistema. Em alguns cenários, o comportamento observado está relacionado às informações recuperadas da base de conhecimento ou às respostas fornecidas pelas ferramentas utilizadas pela assistente. Dessa forma, novas correções devem considerar não apenas o prompt, mas também a base de conhecimento, as regras de negócio e os mecanismos de autorização e validação das ferramentas.
+
+Considerando exclusivamente os resultados do Red Teaming, a versão corrigida ainda não apresenta segurança suficiente para uma recomendação de produção. O parecer final de Go/No-Go deve considerar também os resultados das demais avaliações automatizadas realizadas no projeto.
