@@ -82,9 +82,18 @@ Estrutura de cada objeto no JSON:
   "entrada": "Quanto custa a pipoca de Caramelo Clássico nos diferentes tamanhos?",
   "criterio_esperado": "Informar Pequena R$ 14,90, Média R$ 24,90 e Grande R$ 39,90.",
   "referencia": "01-catalogo-pipocas.md#Caramelo Clássico",
-  "espera_ferramenta": false,
+  "retrieval_context": [
+    "Caramelo Clássico: Pequena (100 g) por R$ 14,90.",
+    "Caramelo Clássico: Média (200 g) por R$ 24,90.",
+    "Caramelo Clássico: Grande (400 g) por R$ 39,90."
+  ],
+  "espera_ferramenta": true,
+  "ferramenta_esperada": [
+    "base-pop-e-doce___Retrieve"
+  ],
   "assert_contains": ["14,90", "24,90", "39,90"],
   "assert_not_contains": ["frete grátis"],
   "llm_rubric": "Avalie se a resposta lista os três tamanhos com os preços exatos..."
 }
 ```
+

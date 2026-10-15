@@ -14,9 +14,10 @@ Este **Golden Dataset** constitui a suíte oficial de referência para a certifi
 
 O dataset foi desenhado sob os padrões modernos de engenharia de qualidade de software para agentes baseados em LLM, combinando:
 1. **Verificação Determinística:** Checagem exata de strings mandatórias (`assert_contains`) e alucinações proibidas (`assert_not_contains`).
-2. **Validação de Ferramentas (Tool Calling):** Inspeção estrita dos argumentos e payloads passados para ferramentas da AWS Lambda (`pedidos-e-cupons___consultar_pedido` e `base-pop-e-doce___Retrieve`).
-3. **Avaliação Semântica (LLM-as-a-Judge):** Rubricas formais de julgamento (`llm_rubric`) compatíveis com frameworks como Promptfoo e DeepEval.
-4. **Testes Metamórficos com Oráculos Formais:** 6 pares matemáticos e lógicos que validam invariantes de comutatividade, monotonicidade, fronteira e privacidade.
+2. **Contexto de Recuperação (RAG & Faithfulness):** Fatos oficiais extraídos da base de conhecimento (`retrieval_context`) para cálculo automatizado de métricas de fidelidade semântica (*FaithfulnessMetric* / *HallucinationMetric*) em frameworks como DeepEval e Ragas.
+3. **Validação de Ferramentas (Tool Calling):** Inspeção estrita de invocação de ferramentas esperadas (`espera_ferramenta`: `true`/`false`, `ferramenta_esperada`: `["base-pop-e-doce___Retrieve"]` ou `["pedidos-e-cupons___consultar_pedido"]`).
+4. **Avaliação Semântica (LLM-as-a-Judge):** Rubricas formais de julgamento (`llm_rubric`) compatíveis com frameworks como Promptfoo e DeepEval.
+5. **Testes Metamórficos com Oráculos Formais:** 6 pares matemáticos e lógicos que validam invariantes de comutatividade, monotonicidade, fronteira e privacidade.
 
 ---
 
