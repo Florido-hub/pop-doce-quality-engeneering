@@ -16,3 +16,13 @@ __pycache__/
 *.log
 scratch/
 tmp/
+.DS_Store
+
+# Pytest
+.pytest_cache/
+
+# IDE
+.idea/
+
+# DeepEval local
+.deepeval/

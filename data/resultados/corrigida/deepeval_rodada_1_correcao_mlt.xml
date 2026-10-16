@@ -1,0 +1,753 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="6" time="159.160" timestamp="2026-10-15T19:03:29.763683-03:00" hostname="MacBook-Air-de-Ananda.local"><testcase classname="tests.deepeval_tests.test_geval" name="test_geval[TC-MLT-01]" time="34.712"><failure message="AssertionError: Metrics: Conformidade de Claims [GEval] (score: 0.1, threshold: 0.8, strict: False, error: None, reason: The response fails to meet the evaluation criteria. Firstly, the total amount (R$ 64.06) does not match the required R$ 73.56. Secondly, the destination is not Porto Alegre, but the conversation context is maintained. Finally, the actual output provides a total of R$ 64.06, which is incorrect compared to the expected R$ 73.56.) failed.">caso = {'id': 'TC-MLT-01', 'categoria': 'conversa_multi_turnos', 'subcategoria': 'carrinho_progressivo', 'titulo': 'Fluxo de pedido progressivo com cálculo final exato (3 turnos)', ...}
+juiz = &lt;deepeval.models.llms.ollama_model.OllamaModel object at 0x113684ad0&gt;
+
+    @pytest.mark.parametrize(
+        "caso",
+        dataset,
+        ids=lambda caso: caso["id"]
+    )
+    def test_geval(caso, juiz):
+    
+        if "turnos" in caso:
+            entrada_agente = [
+                turno["entrada"]
+                for turno in caso["turnos"]
+            ]
+        else:
+            entrada_agente = caso["entrada"]
+    
+        #resposta = perguntar(entrada_agente)
+        prompt = obter_prompt()
+    
+        resposta = perguntar(
+            entrada_agente,
+            prompt=prompt
+    )
+    
+        input_avaliacao = preparar_input_avaliacao(caso)
+    
+        test_case = LLMTestCase(
+            input=input_avaliacao,
+            actual_output=resposta
+        )
+    
+        criterio = caso.get("criterio_esperado") or caso.get("llm_rubric")
+    
+        if not criterio:
+            raise ValueError(
+                f"Caso {caso['id']} não possui criterio_esperado nem llm_rubric."
+        )
+    
+        metric = GEval(
+            name="Conformidade de Claims",
+            criteria=criterio,
+            evaluation_params=[
+                    SingleTurnParams.INPUT,
+                SingleTurnParams.ACTUAL_OUTPUT
+            ],
+            threshold=0.8,
+            model=juiz
+    )
+    
+&gt;       assert_test(test_case, metrics=[metric])
+
+tests/deepeval_tests/test_geval.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+test_case = LLMTestCase(input='Histórico da conversa:\nTurno 1: Olá! Gostaria de uma pipoca grande de Caramelo Clássico.\nTurno 2:...resources_called=None, mcp_prompts_called=None, custom_column_key_values=None, expectations=None, expected_labels=None)
+metrics = [&lt;deepeval.metrics.g_eval.g_eval.GEval object at 0x113687e00&gt;]
+golden = None, run_async = True, classifiers = None
+
+    def assert_test(
+        test_case: Optional[Union[LLMTestCase, ConversationalTestCase]] = None,
+        metrics: Optional[
+            Union[
+                List[BaseMetric],
+                List[BaseConversationalMetric],
+            ]
+        ] = None,
+        golden: Optional[Golden] = None,
+        run_async: bool = True,
+        classifiers: Optional[List[BaseClassifier]] = None,
+    ):
+        validate_assert_test_inputs(
+            golden=golden,
+            test_case=test_case,
+            metrics=metrics,
+            classifiers=classifiers,
+        )
+        if classifiers:
+            validate_classifiers(
+                [test_case] if test_case is not None else None, classifiers
+            )
+    
+        async_config = AsyncConfig(throttle_value=0, max_concurrent=100)
+        display_config = DisplayConfig(
+            verbose_mode=should_verbose_print(), show_indicator=True
+        )
+        error_config = ErrorConfig(
+            ignore_errors=should_ignore_errors(),
+            skip_on_missing_params=should_skip_on_missing_params(),
+        )
+        cache_config = CacheConfig(
+            write_cache=get_is_running_deepeval(), use_cache=should_use_cache()
+        )
+    
+        if golden and not test_case:
+            # Trace-scoped assert_test: read the active trace set by the plugin.
+            test_result = _assert_test_from_current_trace(
+                golden=golden,
+                metrics=metrics,
+                error_config=error_config,
+                display_config=display_config,
+            )
+    
+        elif test_case and (metrics or classifiers or test_case.expectations):
+            if metrics and not test_case.expectations:
+                check_at_least_one_metric_has_threshold(metrics)
+            if run_async:
+                loop = get_or_create_event_loop()
+                test_result = loop.run_until_complete(
+                    a_execute_test_cases(
+                        [test_case],
+                        metrics or [],
+                        error_config=error_config,
+                        display_config=display_config,
+                        async_config=async_config,
+                        cache_config=cache_config,
+                        identifier=get_identifier(),
+                        _use_bar_indicator=True,
+                        _is_assert_test=True,
+                        classifiers=classifiers,
+                    )
+                )[0]
+            else:
+                test_result = execute_test_cases(
+                    [test_case],
+                    metrics or [],
+                    error_config=error_config,
+                    display_config=display_config,
+                    cache_config=cache_config,
+                    identifier=get_identifier(),
+                    _use_bar_indicator=False,
+                    _is_assert_test=True,
+                    classifiers=classifiers,
+                )[0]
+    
+        # `success is None` means nothing produced a verdict (e.g. classifiers with
+        # no expected labels); that is not a failure.
+        if test_result.success is False:
+            failed_metrics_data: List[MetricData] = []
+            # even for conversations, test_result right now is just the
+            # result for the last message
+            for metric_data in test_result.metrics_data or []:
+                if metric_data.error is not None:
+                    failed_metrics_data.append(metric_data)
+                else:
+                    # This try block is for user defined custom metrics,
+                    # which might not handle the score == undefined case elegantly
+                    try:
+                        if not metric_data.success:
+                            failed_metrics_data.append(metric_data)
+                    except Exception:
+                        failed_metrics_data.append(metric_data)
+    
+            failed_classifications: List[Classification] = [
+                classification
+                for classification in test_result.classifications or []
+                if classification.success is False
+            ]
+    
+            failed_parts = [
+                f"{metrics_data.name} (score: {metrics_data.score}, threshold: {metrics_data.threshold}, strict: {metrics_data.strict_mode}, error: {metrics_data.error}, reason: {metrics_data.reason})"
+                for metrics_data in failed_metrics_data
+            ]
+            failed_parts += [
+                f"{classification.name} (label: {classification.label}, expected: {classification.expected_label}, error: {classification.error}, reason: {classification.reason})"
+                for classification in failed_classifications
+            ]
+            failed_metrics_str = ", ".join(failed_parts)
+    
+            if failed_metrics_data and failed_classifications:
+                subject = "Metrics and classifiers"
+            elif failed_classifications:
+                subject = "Classifiers"
+            else:
+                subject = "Metrics"
+    
+            if test_case is not None and test_case.flaky:
+                # Flaky test cases don't block CI: warn (shows up in pytest's
+                # warnings summary) but don't raise
+                warnings.warn(
+                    f"Flaky test case failed (no assertion raised): "
+                    f"{subject}: {failed_metrics_str} failed."
+                )
+            else:
+&gt;               raise AssertionError(f"{subject}: {failed_metrics_str} failed.")
+E               AssertionError: Metrics: Conformidade de Claims [GEval] (score: 0.1, threshold: 0.8, strict: False, error: None, reason: The response fails to meet the evaluation criteria. Firstly, the total amount (R$ 64.06) does not match the required R$ 73.56. Secondly, the destination is not Porto Alegre, but the conversation context is maintained. Finally, the actual output provides a total of R$ 64.06, which is incorrect compared to the expected R$ 73.56.) failed.
+
+.venv/lib/python3.13/site-packages/deepeval/evaluate/evaluate.py:209: AssertionError</failure></testcase><testcase classname="tests.deepeval_tests.test_geval" name="test_geval[TC-MLT-02]" time="26.172"><failure message="AssertionError: Metrics: Conformidade de Claims [GEval] (score: 0.6, threshold: 0.8, strict: False, error: None, reason: The response correctly identifies the replacement item (Chocolate Belga Grande) and accurately calculates the subtotal to R$ 49.90. However, it fails to remove the original item (Pipoca Doce de Leite com Flor de Sal Grande) from the calculation, as step 2 requires. Therefore, the alignment with the evaluation steps is incomplete.) failed.">caso = {'id': 'TC-MLT-02', 'categoria': 'conversa_multi_turnos', 'subcategoria': 'substituicao_itens', 'titulo': 'Substituição de item durante a conversa e recálculo de subtotal', ...}
+juiz = &lt;deepeval.models.llms.ollama_model.OllamaModel object at 0x113684ad0&gt;
+
+    @pytest.mark.parametrize(
+        "caso",
+        dataset,
+        ids=lambda caso: caso["id"]
+    )
+    def test_geval(caso, juiz):
+    
+        if "turnos" in caso:
+            entrada_agente = [
+                turno["entrada"]
+                for turno in caso["turnos"]
+            ]
+        else:
+            entrada_agente = caso["entrada"]
+    
+        #resposta = perguntar(entrada_agente)
+        prompt = obter_prompt()
+    
+        resposta = perguntar(
+            entrada_agente,
+            prompt=prompt
+    )
+    
+        input_avaliacao = preparar_input_avaliacao(caso)
+    
+        test_case = LLMTestCase(
+            input=input_avaliacao,
+            actual_output=resposta
+        )
+    
+        criterio = caso.get("criterio_esperado") or caso.get("llm_rubric")
+    
+        if not criterio:
+            raise ValueError(
+                f"Caso {caso['id']} não possui criterio_esperado nem llm_rubric."
+        )
+    
+        metric = GEval(
+            name="Conformidade de Claims",
+            criteria=criterio,
+            evaluation_params=[
+                    SingleTurnParams.INPUT,
+                SingleTurnParams.ACTUAL_OUTPUT
+            ],
+            threshold=0.8,
+            model=juiz
+    )
+    
+&gt;       assert_test(test_case, metrics=[metric])
+
+tests/deepeval_tests/test_geval.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+test_case = LLMTestCase(input='Histórico da conversa:\nTurno 1: Quero pedir 1 Pipoca Doce de Leite com Flor de Sal Grande.\n\nSoli...resources_called=None, mcp_prompts_called=None, custom_column_key_values=None, expectations=None, expected_labels=None)
+metrics = [&lt;deepeval.metrics.g_eval.g_eval.GEval object at 0x1136df390&gt;]
+golden = None, run_async = True, classifiers = None
+
+    def assert_test(
+        test_case: Optional[Union[LLMTestCase, ConversationalTestCase]] = None,
+        metrics: Optional[
+            Union[
+                List[BaseMetric],
+                List[BaseConversationalMetric],
+            ]
+        ] = None,
+        golden: Optional[Golden] = None,
+        run_async: bool = True,
+        classifiers: Optional[List[BaseClassifier]] = None,
+    ):
+        validate_assert_test_inputs(
+            golden=golden,
+            test_case=test_case,
+            metrics=metrics,
+            classifiers=classifiers,
+        )
+        if classifiers:
+            validate_classifiers(
+                [test_case] if test_case is not None else None, classifiers
+            )
+    
+        async_config = AsyncConfig(throttle_value=0, max_concurrent=100)
+        display_config = DisplayConfig(
+            verbose_mode=should_verbose_print(), show_indicator=True
+        )
+        error_config = ErrorConfig(
+            ignore_errors=should_ignore_errors(),
+            skip_on_missing_params=should_skip_on_missing_params(),
+        )
+        cache_config = CacheConfig(
+            write_cache=get_is_running_deepeval(), use_cache=should_use_cache()
+        )
+    
+        if golden and not test_case:
+            # Trace-scoped assert_test: read the active trace set by the plugin.
+            test_result = _assert_test_from_current_trace(
+                golden=golden,
+                metrics=metrics,
+                error_config=error_config,
+                display_config=display_config,
+            )
+    
+        elif test_case and (metrics or classifiers or test_case.expectations):
+            if metrics and not test_case.expectations:
+                check_at_least_one_metric_has_threshold(metrics)
+            if run_async:
+                loop = get_or_create_event_loop()
+                test_result = loop.run_until_complete(
+                    a_execute_test_cases(
+                        [test_case],
+                        metrics or [],
+                        error_config=error_config,
+                        display_config=display_config,
+                        async_config=async_config,
+                        cache_config=cache_config,
+                        identifier=get_identifier(),
+                        _use_bar_indicator=True,
+                        _is_assert_test=True,
+                        classifiers=classifiers,
+                    )
+                )[0]
+            else:
+                test_result = execute_test_cases(
+                    [test_case],
+                    metrics or [],
+                    error_config=error_config,
+                    display_config=display_config,
+                    cache_config=cache_config,
+                    identifier=get_identifier(),
+                    _use_bar_indicator=False,
+                    _is_assert_test=True,
+                    classifiers=classifiers,
+                )[0]
+    
+        # `success is None` means nothing produced a verdict (e.g. classifiers with
+        # no expected labels); that is not a failure.
+        if test_result.success is False:
+            failed_metrics_data: List[MetricData] = []
+            # even for conversations, test_result right now is just the
+            # result for the last message
+            for metric_data in test_result.metrics_data or []:
+                if metric_data.error is not None:
+                    failed_metrics_data.append(metric_data)
+                else:
+                    # This try block is for user defined custom metrics,
+                    # which might not handle the score == undefined case elegantly
+                    try:
+                        if not metric_data.success:
+                            failed_metrics_data.append(metric_data)
+                    except Exception:
+                        failed_metrics_data.append(metric_data)
+    
+            failed_classifications: List[Classification] = [
+                classification
+                for classification in test_result.classifications or []
+                if classification.success is False
+            ]
+    
+            failed_parts = [
+                f"{metrics_data.name} (score: {metrics_data.score}, threshold: {metrics_data.threshold}, strict: {metrics_data.strict_mode}, error: {metrics_data.error}, reason: {metrics_data.reason})"
+                for metrics_data in failed_metrics_data
+            ]
+            failed_parts += [
+                f"{classification.name} (label: {classification.label}, expected: {classification.expected_label}, error: {classification.error}, reason: {classification.reason})"
+                for classification in failed_classifications
+            ]
+            failed_metrics_str = ", ".join(failed_parts)
+    
+            if failed_metrics_data and failed_classifications:
+                subject = "Metrics and classifiers"
+            elif failed_classifications:
+                subject = "Classifiers"
+            else:
+                subject = "Metrics"
+    
+            if test_case is not None and test_case.flaky:
+                # Flaky test cases don't block CI: warn (shows up in pytest's
+                # warnings summary) but don't raise
+                warnings.warn(
+                    f"Flaky test case failed (no assertion raised): "
+                    f"{subject}: {failed_metrics_str} failed."
+                )
+            else:
+&gt;               raise AssertionError(f"{subject}: {failed_metrics_str} failed.")
+E               AssertionError: Metrics: Conformidade de Claims [GEval] (score: 0.6, threshold: 0.8, strict: False, error: None, reason: The response correctly identifies the replacement item (Chocolate Belga Grande) and accurately calculates the subtotal to R$ 49.90. However, it fails to remove the original item (Pipoca Doce de Leite com Flor de Sal Grande) from the calculation, as step 2 requires. Therefore, the alignment with the evaluation steps is incomplete.) failed.
+
+.venv/lib/python3.13/site-packages/deepeval/evaluate/evaluate.py:209: AssertionError</failure></testcase><testcase classname="tests.deepeval_tests.test_geval" name="test_geval[TC-MLT-03]" time="19.881"><failure message="AssertionError: Metrics: Conformidade de Claims [GEval] (score: 0.0, threshold: 0.8, strict: False, error: None, reason: The response fails to meet several evaluation criteria. It does not verify that Lia correctly referenced PD-1018 from the initial shift as requested in step 1. While the output provides order details, it doesn't confirm the initial request or subsequent email receipt, nor does it validate the tool invocation or confirm the delivery report was generated on 03/10/2026 as specified in the evaluation steps.) failed.">caso = {'id': 'TC-MLT-03', 'categoria': 'conversa_multi_turnos', 'subcategoria': 'autenticacao_duas_etapas', 'titulo': 'Consulta de pedido em 2 etapas: número seguido de e-mail de autenticação', ...}
+juiz = &lt;deepeval.models.llms.ollama_model.OllamaModel object at 0x113684ad0&gt;
+
+    @pytest.mark.parametrize(
+        "caso",
+        dataset,
+        ids=lambda caso: caso["id"]
+    )
+    def test_geval(caso, juiz):
+    
+        if "turnos" in caso:
+            entrada_agente = [
+                turno["entrada"]
+                for turno in caso["turnos"]
+            ]
+        else:
+            entrada_agente = caso["entrada"]
+    
+        #resposta = perguntar(entrada_agente)
+        prompt = obter_prompt()
+    
+        resposta = perguntar(
+            entrada_agente,
+            prompt=prompt
+    )
+    
+        input_avaliacao = preparar_input_avaliacao(caso)
+    
+        test_case = LLMTestCase(
+            input=input_avaliacao,
+            actual_output=resposta
+        )
+    
+        criterio = caso.get("criterio_esperado") or caso.get("llm_rubric")
+    
+        if not criterio:
+            raise ValueError(
+                f"Caso {caso['id']} não possui criterio_esperado nem llm_rubric."
+        )
+    
+        metric = GEval(
+            name="Conformidade de Claims",
+            criteria=criterio,
+            evaluation_params=[
+                    SingleTurnParams.INPUT,
+                SingleTurnParams.ACTUAL_OUTPUT
+            ],
+            threshold=0.8,
+            model=juiz
+    )
+    
+&gt;       assert_test(test_case, metrics=[metric])
+
+tests/deepeval_tests/test_geval.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+test_case = LLMTestCase(input='Histórico da conversa:\nTurno 1: Gostaria de rastrear meu pedido PD-1018.\n\nSolicitação atual:\nMe...resources_called=None, mcp_prompts_called=None, custom_column_key_values=None, expectations=None, expected_labels=None)
+metrics = [&lt;deepeval.metrics.g_eval.g_eval.GEval object at 0x11387fc50&gt;]
+golden = None, run_async = True, classifiers = None
+
+    def assert_test(
+        test_case: Optional[Union[LLMTestCase, ConversationalTestCase]] = None,
+        metrics: Optional[
+            Union[
+                List[BaseMetric],
+                List[BaseConversationalMetric],
+            ]
+        ] = None,
+        golden: Optional[Golden] = None,
+        run_async: bool = True,
+        classifiers: Optional[List[BaseClassifier]] = None,
+    ):
+        validate_assert_test_inputs(
+            golden=golden,
+            test_case=test_case,
+            metrics=metrics,
+            classifiers=classifiers,
+        )
+        if classifiers:
+            validate_classifiers(
+                [test_case] if test_case is not None else None, classifiers
+            )
+    
+        async_config = AsyncConfig(throttle_value=0, max_concurrent=100)
+        display_config = DisplayConfig(
+            verbose_mode=should_verbose_print(), show_indicator=True
+        )
+        error_config = ErrorConfig(
+            ignore_errors=should_ignore_errors(),
+            skip_on_missing_params=should_skip_on_missing_params(),
+        )
+        cache_config = CacheConfig(
+            write_cache=get_is_running_deepeval(), use_cache=should_use_cache()
+        )
+    
+        if golden and not test_case:
+            # Trace-scoped assert_test: read the active trace set by the plugin.
+            test_result = _assert_test_from_current_trace(
+                golden=golden,
+                metrics=metrics,
+                error_config=error_config,
+                display_config=display_config,
+            )
+    
+        elif test_case and (metrics or classifiers or test_case.expectations):
+            if metrics and not test_case.expectations:
+                check_at_least_one_metric_has_threshold(metrics)
+            if run_async:
+                loop = get_or_create_event_loop()
+                test_result = loop.run_until_complete(
+                    a_execute_test_cases(
+                        [test_case],
+                        metrics or [],
+                        error_config=error_config,
+                        display_config=display_config,
+                        async_config=async_config,
+                        cache_config=cache_config,
+                        identifier=get_identifier(),
+                        _use_bar_indicator=True,
+                        _is_assert_test=True,
+                        classifiers=classifiers,
+                    )
+                )[0]
+            else:
+                test_result = execute_test_cases(
+                    [test_case],
+                    metrics or [],
+                    error_config=error_config,
+                    display_config=display_config,
+                    cache_config=cache_config,
+                    identifier=get_identifier(),
+                    _use_bar_indicator=False,
+                    _is_assert_test=True,
+                    classifiers=classifiers,
+                )[0]
+    
+        # `success is None` means nothing produced a verdict (e.g. classifiers with
+        # no expected labels); that is not a failure.
+        if test_result.success is False:
+            failed_metrics_data: List[MetricData] = []
+            # even for conversations, test_result right now is just the
+            # result for the last message
+            for metric_data in test_result.metrics_data or []:
+                if metric_data.error is not None:
+                    failed_metrics_data.append(metric_data)
+                else:
+                    # This try block is for user defined custom metrics,
+                    # which might not handle the score == undefined case elegantly
+                    try:
+                        if not metric_data.success:
+                            failed_metrics_data.append(metric_data)
+                    except Exception:
+                        failed_metrics_data.append(metric_data)
+    
+            failed_classifications: List[Classification] = [
+                classification
+                for classification in test_result.classifications or []
+                if classification.success is False
+            ]
+    
+            failed_parts = [
+                f"{metrics_data.name} (score: {metrics_data.score}, threshold: {metrics_data.threshold}, strict: {metrics_data.strict_mode}, error: {metrics_data.error}, reason: {metrics_data.reason})"
+                for metrics_data in failed_metrics_data
+            ]
+            failed_parts += [
+                f"{classification.name} (label: {classification.label}, expected: {classification.expected_label}, error: {classification.error}, reason: {classification.reason})"
+                for classification in failed_classifications
+            ]
+            failed_metrics_str = ", ".join(failed_parts)
+    
+            if failed_metrics_data and failed_classifications:
+                subject = "Metrics and classifiers"
+            elif failed_classifications:
+                subject = "Classifiers"
+            else:
+                subject = "Metrics"
+    
+            if test_case is not None and test_case.flaky:
+                # Flaky test cases don't block CI: warn (shows up in pytest's
+                # warnings summary) but don't raise
+                warnings.warn(
+                    f"Flaky test case failed (no assertion raised): "
+                    f"{subject}: {failed_metrics_str} failed."
+                )
+            else:
+&gt;               raise AssertionError(f"{subject}: {failed_metrics_str} failed.")
+E               AssertionError: Metrics: Conformidade de Claims [GEval] (score: 0.0, threshold: 0.8, strict: False, error: None, reason: The response fails to meet several evaluation criteria. It does not verify that Lia correctly referenced PD-1018 from the initial shift as requested in step 1. While the output provides order details, it doesn't confirm the initial request or subsequent email receipt, nor does it validate the tool invocation or confirm the delivery report was generated on 03/10/2026 as specified in the evaluation steps.) failed.
+
+.venv/lib/python3.13/site-packages/deepeval/evaluate/evaluate.py:209: AssertionError</failure></testcase><testcase classname="tests.deepeval_tests.test_geval" name="test_geval[TC-MLT-04]" time="33.944"><failure message="AssertionError: Metrics: Conformidade de Claims [GEval] (score: 0.6, threshold: 0.8, strict: False, error: None, reason: The response partially aligns with the evaluation steps. It correctly identifies the promotional item (Goma Vegana de Maçã Verde 100g) and includes it in the subtotal calculation. However, it fails to verify the promotion itself, as requested in step 1, and doesn't confirm that there's no additional charge for the promotional item, addressing step 3. The output also prompts for delivery details, which is not part of the evaluation criteria.) failed.">caso = {'id': 'TC-MLT-04', 'categoria': 'conversa_multi_turnos', 'subcategoria': 'promocao_brinde_goma', 'titulo': "Aplicação interativa da promoção 'Compre 2 Grandes, Ganhe 1 Bala de Goma 100g'", ...}
+juiz = &lt;deepeval.models.llms.ollama_model.OllamaModel object at 0x113684ad0&gt;
+
+    @pytest.mark.parametrize(
+        "caso",
+        dataset,
+        ids=lambda caso: caso["id"]
+    )
+    def test_geval(caso, juiz):
+    
+        if "turnos" in caso:
+            entrada_agente = [
+                turno["entrada"]
+                for turno in caso["turnos"]
+            ]
+        else:
+            entrada_agente = caso["entrada"]
+    
+        #resposta = perguntar(entrada_agente)
+        prompt = obter_prompt()
+    
+        resposta = perguntar(
+            entrada_agente,
+            prompt=prompt
+    )
+    
+        input_avaliacao = preparar_input_avaliacao(caso)
+    
+        test_case = LLMTestCase(
+            input=input_avaliacao,
+            actual_output=resposta
+        )
+    
+        criterio = caso.get("criterio_esperado") or caso.get("llm_rubric")
+    
+        if not criterio:
+            raise ValueError(
+                f"Caso {caso['id']} não possui criterio_esperado nem llm_rubric."
+        )
+    
+        metric = GEval(
+            name="Conformidade de Claims",
+            criteria=criterio,
+            evaluation_params=[
+                    SingleTurnParams.INPUT,
+                SingleTurnParams.ACTUAL_OUTPUT
+            ],
+            threshold=0.8,
+            model=juiz
+    )
+    
+&gt;       assert_test(test_case, metrics=[metric])
+
+tests/deepeval_tests/test_geval.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+test_case = LLMTestCase(input='Histórico da conversa:\nTurno 1: Quero comprar duas pipocas Grandes: uma de Caramelo Clássico e uma...resources_called=None, mcp_prompts_called=None, custom_column_key_values=None, expectations=None, expected_labels=None)
+metrics = [&lt;deepeval.metrics.g_eval.g_eval.GEval object at 0x11387f610&gt;]
+golden = None, run_async = True, classifiers = None
+
+    def assert_test(
+        test_case: Optional[Union[LLMTestCase, ConversationalTestCase]] = None,
+        metrics: Optional[
+            Union[
+                List[BaseMetric],
+                List[BaseConversationalMetric],
+            ]
+        ] = None,
+        golden: Optional[Golden] = None,
+        run_async: bool = True,
+        classifiers: Optional[List[BaseClassifier]] = None,
+    ):
+        validate_assert_test_inputs(
+            golden=golden,
+            test_case=test_case,
+            metrics=metrics,
+            classifiers=classifiers,
+        )
+        if classifiers:
+            validate_classifiers(
+                [test_case] if test_case is not None else None, classifiers
+            )
+    
+        async_config = AsyncConfig(throttle_value=0, max_concurrent=100)
+        display_config = DisplayConfig(
+            verbose_mode=should_verbose_print(), show_indicator=True
+        )
+        error_config = ErrorConfig(
+            ignore_errors=should_ignore_errors(),
+            skip_on_missing_params=should_skip_on_missing_params(),
+        )
+        cache_config = CacheConfig(
+            write_cache=get_is_running_deepeval(), use_cache=should_use_cache()
+        )
+    
+        if golden and not test_case:
+            # Trace-scoped assert_test: read the active trace set by the plugin.
+            test_result = _assert_test_from_current_trace(
+                golden=golden,
+                metrics=metrics,
+                error_config=error_config,
+                display_config=display_config,
+            )
+    
+        elif test_case and (metrics or classifiers or test_case.expectations):
+            if metrics and not test_case.expectations:
+                check_at_least_one_metric_has_threshold(metrics)
+            if run_async:
+                loop = get_or_create_event_loop()
+                test_result = loop.run_until_complete(
+                    a_execute_test_cases(
+                        [test_case],
+                        metrics or [],
+                        error_config=error_config,
+                        display_config=display_config,
+                        async_config=async_config,
+                        cache_config=cache_config,
+                        identifier=get_identifier(),
+                        _use_bar_indicator=True,
+                        _is_assert_test=True,
+                        classifiers=classifiers,
+                    )
+                )[0]
+            else:
+                test_result = execute_test_cases(
+                    [test_case],
+                    metrics or [],
+                    error_config=error_config,
+                    display_config=display_config,
+                    cache_config=cache_config,
+                    identifier=get_identifier(),
+                    _use_bar_indicator=False,
+                    _is_assert_test=True,
+                    classifiers=classifiers,
+                )[0]
+    
+        # `success is None` means nothing produced a verdict (e.g. classifiers with
+        # no expected labels); that is not a failure.
+        if test_result.success is False:
+            failed_metrics_data: List[MetricData] = []
+            # even for conversations, test_result right now is just the
+            # result for the last message
+            for metric_data in test_result.metrics_data or []:
+                if metric_data.error is not None:
+                    failed_metrics_data.append(metric_data)
+                else:
+                    # This try block is for user defined custom metrics,
+                    # which might not handle the score == undefined case elegantly
+                    try:
+                        if not metric_data.success:
+                            failed_metrics_data.append(metric_data)
+                    except Exception:
+                        failed_metrics_data.append(metric_data)
+    
+            failed_classifications: List[Classification] = [
+                classification
+                for classification in test_result.classifications or []
+                if classification.success is False
+            ]
+    
+            failed_parts = [
+                f"{metrics_data.name} (score: {metrics_data.score}, threshold: {metrics_data.threshold}, strict: {metrics_data.strict_mode}, error: {metrics_data.error}, reason: {metrics_data.reason})"
+                for metrics_data in failed_metrics_data
+            ]
+            failed_parts += [
+                f"{classification.name} (label: {classification.label}, expected: {classification.expected_label}, error: {classification.error}, reason: {classification.reason})"
+                for classification in failed_classifications
+            ]
+            failed_metrics_str = ", ".join(failed_parts)
+    
+            if failed_metrics_data and failed_classifications:
+                subject = "Metrics and classifiers"
+            elif failed_classifications:
+                subject = "Classifiers"
+            else:
+                subject = "Metrics"
+    
+            if test_case is not None and test_case.flaky:
+                # Flaky test cases don't block CI: warn (shows up in pytest's
+                # warnings summary) but don't raise
+                warnings.warn(
+                    f"Flaky test case failed (no assertion raised): "
+                    f"{subject}: {failed_metrics_str} failed."
+                )
+            else:
+&gt;               raise AssertionError(f"{subject}: {failed_metrics_str} failed.")
+E               AssertionError: Metrics: Conformidade de Claims [GEval] (score: 0.6, threshold: 0.8, strict: False, error: None, reason: The response partially aligns with the evaluation steps. It correctly identifies the promotional item (Goma Vegana de Maçã Verde 100g) and includes it in the subtotal calculation. However, it fails to verify the promotion itself, as requested in step 1, and doesn't confirm that there's no additional charge for the promotional item, addressing step 3. The output also prompts for delivery details, which is not part of the evaluation criteria.) failed.
+
+.venv/lib/python3.13/site-packages/deepeval/evaluate/evaluate.py:209: AssertionError</failure></testcase><testcase classname="tests.deepeval_tests.test_geval" name="test_geval[TC-MLT-05]" time="23.078" /><testcase classname="tests.deepeval_tests.test_geval" name="test_geval[TC-MLT-06]" time="21.097" /></testsuite></testsuites>

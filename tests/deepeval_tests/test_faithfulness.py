@@ -9,6 +9,7 @@ from deepeval.test_case import LLMTestCase
 from utils.juiz import obter_juiz
 from src.chatbot import perguntar
 from utils.preparar_input import preparar_input_avaliacao
+from utils.versao_lia import obter_prompt
 
 caminho_json = (Path(__file__).resolve().parents[2]/ "data"/ "golden_dataset.json")
 
@@ -34,7 +35,13 @@ def test_faithfulness(caso, juiz):
     else:
         entrada_agente = caso["entrada"]
 
-    resposta = perguntar(entrada_agente)
+    #resposta = perguntar(entrada_agente)
+    prompt = obter_prompt()
+
+    resposta = perguntar(
+        entrada_agente,
+        prompt=prompt
+)
 
     input_avaliacao = preparar_input_avaliacao(caso)
 
