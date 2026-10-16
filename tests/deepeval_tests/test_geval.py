@@ -51,15 +51,22 @@ def test_geval(caso, juiz):
         actual_output=resposta
     )
 
+    criterio = caso.get("criterio_esperado") or caso.get("llm_rubric")
+
+    if not criterio:
+        raise ValueError(
+            f"Caso {caso['id']} não possui criterio_esperado nem llm_rubric."
+    )
+
     metric = GEval(
         name="Conformidade de Claims",
-        criteria=caso["criterio_esperado"],
+        criteria=criterio,
         evaluation_params=[
-            SingleTurnParams.INPUT,
+                SingleTurnParams.INPUT,
             SingleTurnParams.ACTUAL_OUTPUT
         ],
         threshold=0.8,
         model=juiz
-    )
+)
 
     assert_test(test_case, metrics=[metric])
