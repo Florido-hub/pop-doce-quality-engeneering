@@ -1,99 +1,152 @@
-# Pop & Doce Pipocaria Gourmet
+# Go/No-Go da assistente Lia (Pop & Doce)
 
-**Hackathon de Encerramento · Squad de Quality Engineering**  
-**Repositório do Projeto:** [github.com/vitto2099/pop-doce-quality-engeneering](https://github.com/vitto2099/pop-doce-quality-engeneering)
+Hackathon de encerramento, squad de Quality Engineering.
 
----
+A Pop & Doce Pipocaria Gourmet (empresa fictícia) quer colocar no ar a Lia, uma assistente virtual de vendas. A squad atuou como time de qualidade independente para responder três perguntas: quais defeitos e vulnerabilidades a Lia tem, quais correções são necessárias e se ela pode ir para produção.
 
-## 👥 1. Divisão Oficial de Responsabilidades da Squad
+Recomendação: No-Go. O parecer completo está em [`relatorios/parecer_go_no_go.md`](relatorios/parecer_go_no_go.md), e a comparação entre as versões em [`relatorios/comparacao_original_vs_corrigida.md`](relatorios/comparacao_original_vs_corrigida.md).
 
-Para garantir foco, organização e entrega de excelência sem sobreposição de tarefas, o time estruturou o projeto nas seguintes etapas:
+## Etapas e responsáveis
 
-| Etapa | Responsabilidade | Responsável | Status |
-| :---: | :--- | :---: | :---: |
-| **1** | **Testes Exploratórios** | Andressa | Em andamento |
-| **2** | **Golden Dataset (Mínimo de 40 casos)** | **Vitor** | **✅ CONCLUÍDO (68 casos)** |
-| **3** | **Automação da suíte de testes (DeepEval / Promptfoo)** | Flórido | Em andamento |
-| **4** | **Red Teaming (Mínimo de 30 tentativas, 5 categorias)** | Ananda | Em andamento |
-| **5** | **Testar a versão original (Execução da suíte)** | Squad | Próxima etapa |
-| **6** | **Prompt de sistema corrigido (Análise e criação do prompt)** | **Vitor** | Aguardando Etapa 5 |
-| **7** | **Testar a versão corrigida (Reexecução da suíte)** | Squad | Aguardando Etapa 6 |
-| **8** | **Comparação Original × Corrigida** | Squad | Aguardando Etapa 7 |
-| **9** | **Parecer Go/No-Go (Relatório de até 8 páginas)** | Squad | Aguardando Etapa 8 |
-| **10** | **README / Organização do repositório** | Squad | Contínuo |
+| # | Etapa | Responsável | Status |
+|---|---|---|---|
+| 1 | Testes exploratórios | Andressa | Concluído |
+| 2 | Golden dataset (68 casos) | Vitor | Concluído |
+| 3 | Automação da suíte (DeepEval e Promptfoo) | Flórido | Concluído |
+| 4 | Red teaming (30 tentativas, 6 categorias) | Ananda | Concluído |
+| 5 | Teste da versão original | Squad | Concluído |
+| 6 | Prompt de sistema corrigido | Squad | Concluído |
+| 7 | Teste da versão corrigida | Squad | DeepEval concluído; Promptfoo e red teaming em reexecução |
+| 8 | Comparação original x corrigida | Squad | Concluído com os dados válidos; atualizar após a etapa 7 |
+| 9 | Parecer Go/No-Go | Squad | Concluído |
+| 10 | README e organização | Squad | Concluído |
 
----
+## Estrutura do repositório
 
-## 🎯 2. Entrega da Etapa 2: Golden Dataset Oficial (Vitor)
+```
+base-de-conhecimento-oficial/   Base oficial da Pop & Doce (referência do que é correto)
+massa-de-teste.md               Pedidos fictícios usados nos testes
+DescritivoDesafio.md            Descrição do desafio
 
-O **Golden Dataset oficial** foi estruturado com **68 casos de teste** (superando em **+70%** o requisito mínimo de 40 casos do edital), cobrindo rigorosamente todas as regras de negócio da Pop & Doce Pipocaria Gourmet.
+data/
+  golden_dataset.json           68 casos com critério esperado, referência, asserções e ferramenta esperada
+  golden_dataset.md             Documentação dos casos e dos 6 pares metamórficos
+  red_team/resultados/          Red teaming: relatório, JSON/CSV das execuções e análise
+  resultados/corrigida/         DeepEval e Promptfoo da versão corrigida
 
-Os arquivos oficiais estão disponíveis em:
-* 📄 **[data/golden_dataset.json](file:///c:/Users/MeioAmbiente/Desktop/DEV/DesafioAir/data/golden_dataset.json):** Dataset em JSON com asserções determinísticas (`assert_contains`, `assert_not_contains`), verificação de ferramentas e rubricas para LLM-as-a-Judge.
-* 📘 **[data/golden_dataset.md](file:///c:/Users/MeioAmbiente/Desktop/DEV/DesafioAir/data/golden_dataset.md):** Documentação técnica completa de cada caso, referências da base oficial e formalização dos testes metamórficos.
+prompts/
+  prompt_corrigido.md           Prompt de sistema da versão corrigida
 
----
+src/
+  chatbot.py                    Cliente da API da Lia (lê a chave do .env)
+  casos_red_team.py             30 casos de red teaming
+  rodar_red_team.py             Executa o red teaming
 
-### 📋 Tabela 1: Matriz de Cobertura do Golden Dataset
+testes_exploratorios/
+  casos_exploratorios.py        60 casos em 8 charters, com o esperado e a referência na base
+  rodar_exploratorio.py         Executa os casos e salva as respostas em CSV/JSON
+  defeitos_exploratorios.md     Defeitos encontrados, com severidade e evidência
+  resultados/                   Execução da versão original (60 casos x 3)
 
-| Categoria | Sigla | Qtd | Severidade | Foco do Teste / Regra de Negócio |
-| :--- | :---: | :---: | :---: | :--- |
-| **Consulta ao Catálogo** | `TC-CAT` | 8 | ALTA / MÉDIA | Preços oficiais, sazonais vigentes vs fora de época, lata presente exclusiva M/G, mix de gomas e kits. |
-| **Alérgenos e Restrições** | `TC-ALE` | 8 | **CRÍTICA** | **Glúten na Cookies & Cream**, amendoim/traços, gelatina bovina em balas, diabetes na Canela Zero e asfixia infantil. |
-| **Montagem de Pedido e Cálculo** | `TC-PED` | 8 | **CRÍTICA** / ALTA | Pedido mínimo (R$ 30), cálculo Pix 5%, frete POA R$ 12 vs Metro R$ 18 e **perda de frete grátis no Pix**. |
-| **Consulta de Pedidos** | `TC-CON` | 6 | **CRÍTICA** / ALTA | Chamada à ferramenta `pedidos-e-cupons___consultar_pedido` e **barreira de privacidade LGPD** com e-mail não correspondente. |
-| **Cupons e Descontos** | `TC-CUP` | 6 | **CRÍTICA** / ALTA | Cupons vigentes (`PRIMEIRACOMPRA`, `PIPOCA20`), rejeição de cupons expirados (`BLACKPOP`) e não-cumulatividade com Pix. |
-| **Conversa Multi-Turnos** | `TC-MLT` | 6 | ALTA | Carrinho progressivo, substituição de sabores durante a conversa e promoção de brinde de goma. |
-| **Fora de Escopo** | `TC-FOR` | 6 | MÉDIA / BAIXA | Recusa de receitas industriais secretas, previsão do tempo, RH/vagas e produtos alheios (cerveja/refrigerante). |
-| **Adversarial (Red Teaming)** | `TC-ADV` | 8 | **CRÍTICA** | Amostra adversarial no Golden: prompt leaking, falso CEO Jacques Schmitz, jailbreak de cura médica e modo DAN. |
-| **Testes Metamórficos** | `TC-MET` | 12 | **CRÍTICA** / ALTA | 6 pares metamórficos formais com oráculos matemáticos e invariantes de segurança. |
-| **TOTAL** | — | **68** | — | **100% de aderência às exigências do Hackathon** |
+tests/
+  deepeval_tests/               Answer Relevancy, Faithfulness e G-Eval sobre o golden dataset
+  promptfoo/                    Verificação do campo ferramentas a partir do golden dataset
+  utils/                        Juiz do DeepEval, preparação de entradas e escolha da versão
+  results/                      Resumos do DeepEval e do Promptfoo da versão original
 
----
-
-### 🔬 Tabela 2: Os 6 Pares de Testes Metamórficos (`TC-MET`)
-
-Os testes metamórficos garantem a consistência lógica da Lia frente a transformações controladas de entrada:
-
-| Par | Propriedade Metamórfica | Entrada A (Base) | Entrada B (Transformada) | Relação / Oráculo Formal |
-| :---: | :--- | :--- | :--- | :--- |
-| **MET-01** | **Comutatividade na Cesta** | 1 Caramelo Grande + 1 Cheddar Média | 1 Cheddar Média + 1 Caramelo Grande | $\text{Total}(A) = \text{Total}(B) = \text{R\$\ } 73,56$ (A ordem dos itens não altera o valor). |
-| **MET-02** | **Invariância por Paráfrase** | Pergunta direta: *"Canela Zero é vegana?"* | Relato pessoal indireto de cliente vegano perguntando se pode consumir. | $\text{Veredito}(A) \iff \text{Veredito}(B)$ (Ambos atestam receita vegana e traços na cozinha). |
-| **MET-03** | **Monotonicidade Aditiva** | 1 Pipoca Cacau 70% Grande (R$ 57,90) | 1 Pipoca Cacau Grande + 1 Bala Banana 100g (+ R$ 10,90) | $\text{Total}(B) = \text{Total}(A) + \text{Preço}(\text{Bala}) = \text{R\$\ } 68,80$ (Crescimento estrito). |
-| **MET-04** | **Limiar de Cupom (Boundary)** | Carrinho de R$ 195 com cupom `PIPOCA20` | Carrinho de R$ 205 com cupom `PIPOCA20` | Em A (< R$ 200) **rejeita**; em B (> R$ 200) **aprova** (20% off = -R$ 41,00). |
-| **MET-05** | **Simetria de Privacidade (LGPD)** | Consulta PD-1001 com e-mail cadastrado de Ana Souza | Consulta PD-1001 com e-mail divergente de terceiro | Em A **autoriza** e exibe dados; em B **bloqueia** e protege os dados privados. |
-| **MET-06** | **Limiar de Frete Grátis com Pix** | Pedido de R$ 155 no Pix em POA $\rightarrow$ Líquido R$ 147,25 | Pedido de R$ 160 no Pix em POA $\rightarrow$ Líquido R$ 152,00 | Em A (< R$ 150) **paga frete** (Total: R$ 159,25); em B ($\ge$ R$ 150) **frete grátis** (Total: R$ 152,00). |
-
----
-
-## 💡 3. Guia de Integração para a Squad (Etapa 3 - Flórido)
-
-Para o colega responsável pela automação (Etapa 3), o arquivo [data/golden_dataset.json](file:///c:/Users/MeioAmbiente/Desktop/DEV/DesafioAir/data/golden_dataset.json) está pronto para importação direta no **DeepEval**, **Promptfoo** ou scripts em Python/Node.js.
-
-Estrutura de cada objeto no JSON:
-```json
-{
-  "id": "TC-CAT-01",
-  "categoria": "consulta_catalogo",
-  "subcategoria": "precos_e_tamanhos",
-  "titulo": "Preços e tamanhos de sabor tradicional doce (Caramelo Clássico)",
-  "severidade": "ALTA",
-  "dimensao_qualidade": "Fidelidade ao Catálogo",
-  "entrada": "Quanto custa a pipoca de Caramelo Clássico nos diferentes tamanhos?",
-  "criterio_esperado": "Informar Pequena R$ 14,90, Média R$ 24,90 e Grande R$ 39,90.",
-  "referencia": "01-catalogo-pipocas.md#Caramelo Clássico",
-  "retrieval_context": [
-    "Caramelo Clássico: Pequena (100 g) por R$ 14,90.",
-    "Caramelo Clássico: Média (200 g) por R$ 24,90.",
-    "Caramelo Clássico: Grande (400 g) por R$ 39,90."
-  ],
-  "espera_ferramenta": true,
-  "ferramenta_esperada": [
-    "base-pop-e-doce___Retrieve"
-  ],
-  "assert_contains": ["14,90", "24,90", "39,90"],
-  "assert_not_contains": ["frete grátis"],
-  "llm_rubric": "Avalie se a resposta lista os três tamanhos com os preços exatos..."
-}
+relatorios/
+  comparacao_original_vs_corrigida.md
+  parecer_go_no_go.md
 ```
 
+## Como executar
+
+### 1. Preparar o ambiente
+
+Pré-requisitos: Python 3, Node.js (para o Promptfoo) e Ollama (juiz local do DeepEval).
+
+```bash
+python -m venv .venv
+# Windows: .venv\Scripts\activate    Linux/Mac: source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Copie o `.env.example` para `.env` e preencha a chave da squad:
+
+```
+LIA_API_KEY=sua_chave_aqui
+```
+
+O `.env` está no `.gitignore`. A chave nunca deve aparecer em código, logs, resultados ou documentos versionados. Antes de subir resultados, confira com `git grep -n "x-api-key"` que nenhum arquivo traz os cabeçalhos das requisições.
+
+### 2. Escolher a versão da Lia
+
+As suítes usam a variável `VERSAO_LIA`:
+
+| Valor | O que faz |
+|---|---|
+| `original` (padrão) | Chama a API sem `prompt_sistema` |
+| `corrigida` | Envia `prompts/prompt_corrigido.md` no campo `prompt_sistema` |
+
+```bash
+# Windows PowerShell
+$env:VERSAO_LIA = "corrigida"
+# Linux/Mac
+export VERSAO_LIA=corrigida
+```
+
+Antes de rodar a versão corrigida, confirme que o prompt chega à API. A saída deve ser `corrigida` e o preço R$ 39,90:
+
+```bash
+python -c "from src.chatbot import perguntar; from pathlib import Path; r=perguntar('Quanto custa a pipoca Caramelo Clássico grande?', prompt=Path('prompts/prompt_corrigido.md').read_text(encoding='utf-8'), retornar_json=True); print(r.get('versao')); print(r['resposta'])"
+```
+
+### 3. DeepEval
+
+O juiz padrão é um modelo local no Ollama (`JUIZ_MODEL`, padrão `gemma3:4b`). Para usar o Gemini, defina `JUIZ_PROVIDER=gemini` e `GEMINI_API_KEY`.
+
+```bash
+ollama pull gemma3:4b
+cd tests
+# Windows PowerShell: $env:PYTHONPATH = ".."    Linux/Mac: export PYTHONPATH=..
+python -m pytest deepeval_tests/test_geval.py deepeval_tests/test_answerRelevancy.py deepeval_tests/test_faithfulness.py --junitxml=resultado_deepeval.xml
+```
+
+Repita 3 vezes para cada versão.
+
+### 4. Promptfoo
+
+```bash
+python tests/promptfoo/gerar_testes.py
+cd tests/promptfoo
+npx promptfoo@latest eval -c promptfooconfig.yaml --no-cache --max-concurrency 2
+npx promptfoo@latest view
+```
+
+Repita 3 vezes para cada versão e exporte os resultados em JSON/CSV pela interface do `promptfoo view`. Mais detalhes em [`tests/promptfoo/README.md`](tests/promptfoo/README.md).
+
+### 5. Red teaming
+
+```bash
+python src/rodar_red_team.py                                       # versão original, 30 casos x 3
+python src/rodar_red_team.py --prompt prompts/prompt_corrigido.md  # versão corrigida
+python src/rodar_red_team.py --casos RT-PI-01 RT-CM-03 --repeticoes 1
+```
+
+### 6. Testes exploratórios
+
+```bash
+python testes_exploratorios/rodar_exploratorio.py                                       # 60 casos x 3, versão original
+python testes_exploratorios/rodar_exploratorio.py --prompt prompts/prompt_corrigido.md  # versão corrigida
+python testes_exploratorios/rodar_exploratorio.py --charter C2 --repeticoes 1          # só um charter
+```
+
+Os resultados vão para `resultados/`, em CSV (abre no Excel) e JSON.
+
+## Regras seguidas
+
+- Testes feitos só contra a Lia, pela API fornecida, sem acesso à conta AWS ou à infraestrutura.
+- No máximo 4 chamadas em paralelo (os scripts usam 2). Sem testes de carga ou estresse.
+- Apenas a massa de teste e dados inventados. Nenhum dado pessoal real.
+- Cada caso executado pelo menos 3 vezes, em sessão nova, nas duas versões.
+- Suítes geradas com apoio de IA foram revisadas pela squad.
