@@ -14,12 +14,12 @@ Recomendação: No-Go. O parecer completo está em [`relatorios/parecer_go_no_go
 | 2 | Golden dataset (68 casos) | Vitor | Concluído |
 | 3 | Automação da suíte (DeepEval e Promptfoo) | Flórido | Concluído |
 | 4 | Red teaming (30 tentativas, 6 categorias) | Ananda | Concluído |
-| 5 | Teste da versão original | Squad | Concluído |
-| 6 | Prompt de sistema corrigido | Squad | Concluído |
-| 7 | Teste da versão corrigida | Squad | DeepEval concluído; Promptfoo e red teaming em reexecução |
-| 8 | Comparação original x corrigida | Squad | Concluído com os dados válidos; atualizar após a etapa 7 |
-| 9 | Parecer Go/No-Go | Squad | Concluído |
-| 10 | README e organização | Squad | Concluído |
+| 5 | Teste da versão original | Flórido | Concluído |
+| 6 | Prompt de sistema corrigido | Andressa | Concluído |
+| 7 | Teste da versão corrigida | Ananda | Concluído |
+| 8 | Comparação original x corrigida | Andressa | Concluído |
+| 9 | Parecer Go/No-Go | Andressa | Concluído |
+| 10 | README e organização | Todos | Concluído |
 
 ## Estrutura do repositório
 
