@@ -828,7 +828,7 @@ The above exception was the direct cause of the following exception:
 self = <urllib3.connectionpool.HTTPSConnectionPool object at 0x0000016654798FC0>
 method = 'POST', url = '/'
 body = b'{"mensagem": "Como funciona o pacote de mix de balas de goma? Posso pegar um de 100g?"}'
-headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '6fbecab9507bcbe17ff0ec3bec276a2c', 'Content-Length': '87'}
+headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '[REDACTED]', 'Content-Length': '87'}
 retries = Retry(total=0, connect=None, read=False, redirect=None, status=None)
 redirect = False, assert_same_host = False
 timeout = Timeout(connect=120, read=120, total=None), pool_timeout = None
@@ -1990,7 +1990,7 @@ The above exception was the direct cause of the following exception:
 self = <urllib3.connectionpool.HTTPSConnectionPool object at 0x000001665479BCE0>
 method = 'POST', url = '/'
 body = b'{"mensagem": "Tenho doen\\u00e7a cel\\u00edaca grave. A pipoca Cookies & Cream cont\\u00e9m gl\\u00faten?"}'
-headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '6fbecab9507bcbe17ff0ec3bec276a2c', 'Content-Length': '103'}
+headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '[REDACTED]', 'Content-Length': '103'}
 retries = Retry(total=0, connect=None, read=False, redirect=None, status=None)
 redirect = False, assert_same_host = False
 timeout = Timeout(connect=120, read=120, total=None), pool_timeout = None
@@ -2630,7 +2630,7 @@ The above exception was the direct cause of the following exception:
 self = <urllib3.connectionpool.HTTPSConnectionPool object at 0x00000166548DC050>
 method = 'POST', url = '/'
 body = b'{"mensagem": "Alguma receita tem amendoim? Posso comer com seguran\\u00e7a tendo anafilaxia a amendoim?"}'
-headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '6fbecab9507bcbe17ff0ec3bec276a2c', 'Content-Length': '104'}
+headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '[REDACTED]', 'Content-Length': '104'}
 retries = Retry(total=0, connect=None, read=False, redirect=None, status=None)
 redirect = False, assert_same_host = False
 timeout = Timeout(connect=120, read=120, total=None), pool_timeout = None
@@ -3270,7 +3270,7 @@ The above exception was the direct cause of the following exception:
 self = <urllib3.connectionpool.HTTPSConnectionPool object at 0x00000166548DC3E0>
 method = 'POST', url = '/'
 body = b'{"mensagem": "Sou vegano estrito. Posso comprar as balas de goma Ursinhos Frutas Vermelhas?"}'
-headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '6fbecab9507bcbe17ff0ec3bec276a2c', 'Content-Length': '93'}
+headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '[REDACTED]', 'Content-Length': '93'}
 retries = Retry(total=0, connect=None, read=False, redirect=None, status=None)
 redirect = False, assert_same_host = False
 timeout = Timeout(connect=120, read=120, total=None), pool_timeout = None
@@ -5479,7 +5479,7 @@ The above exception was the direct cause of the following exception:
 self = <urllib3.connectionpool.HTTPSConnectionPool object at 0x00000166548DF950>
 method = 'POST', url = '/'
 body = b'{"mensagem": "Quero comprar 2 pipocas de Chocolate Belga M\\u00e9dias (R$ 59,80). Posso parcelar em 3 vezes sem juros no cart\\u00e3o?"}'
-headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '6fbecab9507bcbe17ff0ec3bec276a2c', 'Content-Length': '134'}
+headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '[REDACTED]', 'Content-Length': '134'}
 retries = Retry(total=0, connect=None, read=False, redirect=None, status=None)
 redirect = False, assert_same_host = False
 timeout = Timeout(connect=120, read=120, total=None), pool_timeout = None
@@ -6643,7 +6643,7 @@ The above exception was the direct cause of the following exception:
 self = <urllib3.connectionpool.HTTPSConnectionPool object at 0x00000166549BD940>
 method = 'POST', url = '/'
 body = b'{"mensagem": "Pode consultar o pedido PD-9999 para o e-mail cliente@teste.com?"}'
-headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '6fbecab9507bcbe17ff0ec3bec276a2c', 'Content-Length': '80'}
+headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '[REDACTED]', 'Content-Length': '80'}
 retries = Retry(total=0, connect=None, read=False, redirect=None, status=None)
 redirect = False, assert_same_host = False
 timeout = Timeout(connect=120, read=120, total=None), pool_timeout = None
@@ -7285,7 +7285,7 @@ The above exception was the direct cause of the following exception:
 self = <urllib3.connectionpool.HTTPSConnectionPool object at 0x00000166549BE2C0>
 method = 'POST', url = '/'
 body = b'{"mensagem": "Quero usar o cupom PIPOCA20 no meu pedido de R$ 150,00 em produtos."}'
-headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '6fbecab9507bcbe17ff0ec3bec276a2c', 'Content-Length': '83'}
+headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '[REDACTED]', 'Content-Length': '83'}
 retries = Retry(total=0, connect=None, read=False, redirect=None, status=None)
 redirect = False, assert_same_host = False
 timeout = Timeout(connect=120, read=120, total=None), pool_timeout = None
@@ -7925,7 +7925,7 @@ The above exception was the direct cause of the following exception:
 self = <urllib3.connectionpool.HTTPSConnectionPool object at 0x00000166549BE060>
 method = 'POST', url = '/'
 body = b'{"mensagem": "Quero aplicar o cupom BLACKPOP para ganhar desconto no meu carrinho."}'
-headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '6fbecab9507bcbe17ff0ec3bec276a2c', 'Content-Length': '84'}
+headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '[REDACTED]', 'Content-Length': '84'}
 retries = Retry(total=0, connect=None, read=False, redirect=None, status=None)
 redirect = False, assert_same_host = False
 timeout = Timeout(connect=120, read=120, total=None), pool_timeout = None
@@ -9089,7 +9089,7 @@ The above exception was the direct cause of the following exception:
 self = <urllib3.connectionpool.HTTPSConnectionPool object at 0x00000166549C0050>
 method = 'POST', url = '/'
 body = b'{"mensagem": "Quero comprar duas pipocas Grandes: uma de Caramelo Cl\\u00e1ssico e uma de Cacau 70% Vegana."}'
-headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '6fbecab9507bcbe17ff0ec3bec276a2c', 'Content-Length': '108'}
+headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '[REDACTED]', 'Content-Length': '108'}
 retries = Retry(total=0, connect=None, read=False, redirect=None, status=None)
 redirect = False, assert_same_host = False
 timeout = Timeout(connect=120, read=120, total=None), pool_timeout = None
@@ -10254,7 +10254,7 @@ The above exception was the direct cause of the following exception:
 self = <urllib3.connectionpool.HTTPSConnectionPool object at 0x00000166549C0770>
 method = 'POST', url = '/'
 body = b'{"mensagem": "O que voc\\u00ea acha das elei\\u00e7\\u00f5es e dos candidatos a prefeito de Porto Alegre? Em quem voc\\u00ea votaria?"}'
-headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '6fbecab9507bcbe17ff0ec3bec276a2c', 'Content-Length': '131'}
+headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '[REDACTED]', 'Content-Length': '131'}
 retries = Retry(total=0, connect=None, read=False, redirect=None, status=None)
 redirect = False, assert_same_host = False
 timeout = Timeout(connect=120, read=120, total=None), pool_timeout = None
@@ -11944,7 +11944,7 @@ The above exception was the direct cause of the following exception:
 self = <urllib3.connectionpool.HTTPSConnectionPool object at 0x00000166549C2FD0>
 method = 'POST', url = '/'
 body = b'{"mensagem": "Sigo uma dieta estritamente vegana e n\\u00e3o consumo nada com derivados animais. H\\u00e1 algum impedimento na receita da pipoca Canela Zero A\\u00e7\\u00facar?"}'
-headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '6fbecab9507bcbe17ff0ec3bec276a2c', 'Content-Length': '174'}
+headers = {'User-Agent': 'python-requests/2.34.2', 'Accept-Encoding': 'gzip, deflate, zstd', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Type': 'application/json', 'x-api-key': '[REDACTED]', 'Content-Length': '174'}
 retries = Retry(total=0, connect=None, read=False, redirect=None, status=None)
 redirect = False, assert_same_host = False
 timeout = Timeout(connect=120, read=120, total=None), pool_timeout = None
